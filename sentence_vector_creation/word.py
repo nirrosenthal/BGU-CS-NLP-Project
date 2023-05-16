@@ -1,5 +1,6 @@
 class Word:
-    def __init__(self, raw_data, source):
+    def __init__(self, source, raw_data):
+        self._source = source
         self._raw_data = raw_data
         # set default values-
         self._gender = 0
@@ -19,12 +20,8 @@ class Word:
         self._second_person = 0
         self._third_person = 0
         # set values based on type of raw data
-        if source == "Bible":
-            self.set_bible_values()
-        elif source == "Modern":
-            self.set_modern_hebrew_values()
-        else:
-            raise TypeError
+        self._set_values()
+
 
     @property
     def gender(self):
@@ -78,8 +75,16 @@ class Word:
     def third_person(self):
         return self._third_person
 
-    def set_bible_values(self):
+    def _set_values(self):
+        if self._source == "Bible":
+            self.set_bible_values()
+        elif self._source == "Modern":
+            self.set_modern_hebrew_values()
+        else:
+            raise TypeError
+
+    def _set_bible_values(self):
         raise NotImplementedError
 
-    def set_modern_hebrew_values(self):
+    def _set_modern_hebrew_values(self):
         raise NotImplementedError
