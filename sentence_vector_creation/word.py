@@ -1,50 +1,91 @@
+from enum import Enum
+
+
+class Number(Enum):
+    SINGULAR = 1
+    PLURAL = 2
+    NONE = 0
+
+
+class Gender(Enum):
+    MALE = 1
+    FEMALE = 2
+    NONE = 0
+
+
+class Tense(Enum):
+    PAST = 1
+    PRESENT = 2
+    FUTURE = 3
+    NONE = 0
+
+
+class Person(Enum):
+    FIRST = 1
+    SECOND = 2
+    THIRD = 3
+    NONE = 0
+
+
+class WordType(Enum):
+    ADP = 1
+    PROPN = 2
+    VERB = 3
+    ADJ = 4
+    CONJ = 5
+
+
 class Word:
-    def __init__(self, source, raw_data):
+    def __init__(self, source: str, word: str, gender: Gender, number: Number, tense: Tense,
+                 word_type: WordType, person: Person):
         self._source = source
-        self._raw_data = raw_data
-        # set default values-
-        self._gender = 0
-        self._number = 0
-        # times
-        self._time_past = 1
-        self._time_present = 0
-        self._time_future = 0
-        # word type
-        self._adp = 0
-        self._verb = 0
-        self._noun = 0
-        self._name = 0
-        self._adjective = 0
-        # person type
-        self._first_person = 0
-        self._second_person = 0
-        self._third_person = 0
-        # set values based on type of raw data
-        self._set_values()
-
+        self._word = word
+        self._male = 1 if gender == Gender.MALE else 0
+        self._female = 1 if gender == Gender.FEMALE else 0
+        self._singular = 1 if number == Number.SINGULAR else 0
+        self._plural = 1 if number == Number.PLURAL else 0
+        self._tense_past = 1 if tense == Tense.PAST else 0
+        self._tense_present = 1 if tense == Tense.PRESENT else 0
+        self._tense_future = 1 if tense == Tense.FUTURE else 0
+        self._adp = 1 if word_type == WordType.ADP else 0
+        self._verb = 1 if word_type == WordType.VERB else 0
+        self._adj = 1 if word_type == WordType.ADJ else 0
+        self._conj = 1 if word_type == WordType.CONJ else 0
+        self._propn = 1 if word_type == WordType.PROPN else 0
+        self._first_person = 1 if person == Person.FIRST else 0
+        self._second_person = 1 if person == Person.SECOND else 0
+        self._third_person = 1 if person == Person.Third else 0
 
     @property
-    def gender(self):
-        return self._gender
+    def male(self):
+        return self._male
 
     @property
-    def number(self):
-        return self._number
+    def female(self):
+        return self._female
+
+    @property
+    def singular(self):
+        return self._singular
+
+    @property
+    def plural(self):
+        return self._plural
 
     @property
     def time_past(self):
-        return self._time_past
+        return self._tense_past
 
     @property
     def time_present(self):
-        return self._time_present
+        return self._tense_present
 
     @property
     def time_future(self):
-        return self._time_future
+        return self._tense_future
 
     @property
-    def adp(self):
+    def adpositional_phrase(self):
         return self._adp
 
     @property
@@ -52,16 +93,16 @@ class Word:
         return self._verb
 
     @property
-    def noun(self):
-        return self._noun
-
-    @property
-    def name(self):
-        return self._name
+    def proper_name(self):
+        return self._propn
 
     @property
     def adjective(self):
-        return self._adjective
+        return self._adj
+
+    @property
+    def conjunction(self):
+        return self._conj
 
     @property
     def first_person(self):
@@ -74,17 +115,3 @@ class Word:
     @property
     def third_person(self):
         return self._third_person
-
-    def _set_values(self):
-        if self._source == "Bible":
-            self.set_bible_values()
-        elif self._source == "Modern":
-            self.set_modern_hebrew_values()
-        else:
-            raise TypeError
-
-    def _set_bible_values(self):
-        raise NotImplementedError
-
-    def _set_modern_hebrew_values(self):
-        raise NotImplementedError
