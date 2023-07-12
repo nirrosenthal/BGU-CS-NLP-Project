@@ -1,12 +1,12 @@
 import bs4
-from Sentence import Sentence
+from BibleSentence import BibleSentence
 
 
 class Chapter:
     def __init__(self, raw_data: bs4.element.Tag):
         self._raw_data = raw_data
         self._id: str = raw_data.get("xml:id", "Get Error")
-        self._sentences: list('Sentence') = [Sentence(raw_sentence_data) for raw_sentence_data in raw_data.find_all("s")]
+        self._sentences: list('Sentence') = [BibleSentence(raw_sentence_data) for raw_sentence_data in raw_data.find_all("s")]
 
     @property
     def raw_data(self):
