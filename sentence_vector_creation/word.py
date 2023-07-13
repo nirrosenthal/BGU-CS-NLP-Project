@@ -138,62 +138,96 @@ class Word:
         self._third_person = 1 if person == Person.THIRD else 0
         self._any = 1 if person == Person.ANY else 0
 
-    # @property
-    # def male(self):
-    #     return self._male
-    #
-    # @property
-    # def female(self):
-    #     return self._female
-    #
-    # @property
-    # def singular(self):
-    #     return self._singular
-    #
-    # @property
-    # def plural(self):
-    #     return self._plural
-    #
-    # @property
-    # def time_past(self):
-    #     return self._tense_past
-    #
-    # @property
-    # def time_present(self):
-    #     return self._tense_present
-    #
-    # @property
-    # def time_future(self):
-    #     return self._tense_future
-    #
-    # @property
-    # def adpositional_phrase(self):
-    #     return self._adp
-    #
-    # @property
-    # def verb(self):
-    #     return self._verb
-    #
-    # @property
-    # def proper_name(self):
-    #     return self._propn
-    #
-    # @property
-    # def adjective(self):
-    #     return self._adj
-    #
-    # @property
-    # def conjunction(self):
-    #     return self._conj
-    #
-    # @property
-    # def first_person(self):
-    #     return self._first_person
-    #
-    # @property
-    # def second_person(self):
-    #     return self._second_person
-    #
-    # @property
-    # def third_person(self):
-    #     return self._third_person
+    @property
+    def male(self):
+        return self._male
+
+    @property
+    def female(self):
+        return self._female
+
+    @property
+    def singular(self):
+        return self._singular
+
+    @property
+    def plural(self):
+        return self._plural
+
+    @property
+    def dual(self):
+        return self._dual
+
+    @property
+    def past(self):
+        return self._tense_past
+
+    @property
+    def present(self):
+        return self._tense_present
+
+    @property
+    def future(self):
+        return self._tense_future
+
+
+    @property
+    def adpositional_phrase(self):
+        return self._adp
+
+    @property
+    def verb(self):
+        return self._verb
+
+    @property
+    def adjective(self):
+        return self._adj
+
+    @property
+    def conjunction(self):
+        return self._conj
+
+    @property
+    def proper_name(self):
+        return self._propn
+
+    @property
+    def pronoun(self):
+        return self._pron
+
+    @property
+    def noun(self):
+        return self._noun
+
+    @property
+    def det(self):
+        return self._det
+
+    @property
+    def adverb(self):
+        return self._adv
+
+    @property
+    def auxillery(self):
+        return self._aux
+
+    @property
+    def first_person(self):
+        return self._first_person
+
+    @property
+    def second_person(self):
+        return self._second_person
+
+    @property
+    def third_person(self):
+        return self._third_person
+
+    @property
+    def any_person(self):
+        return self._any
+
+    def properties_dict(self):
+        properties = [p for p in dir(self) if not p[0] == "_"]
+        properties_dict = {p: self.__getattribute__(p) for p in properties}
+        return properties_dict

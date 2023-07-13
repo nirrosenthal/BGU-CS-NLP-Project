@@ -1,6 +1,7 @@
 from BGU_CS_NLP_Project.sentence_vector_creation.word import Word, find_gender, find_number, find_tense, find_word_type, find_person
 from typing import List
 import json
+import pandas as pd
 
 
 class Sentence:
@@ -64,28 +65,45 @@ class Sentence:
             sentences.append(sentence)
         return sentences
 
+    def _sentence_vector_dict(self, words_prev, words_after) -> dict:
+        word_properties = self._words[0].properties_dict().keys()
+        vector_dict = {"id": self._id, "source": self._source, "len": self._len, "glirt_def": self._glirt_def, "rosen_def": self._rosen_def}
+        hifeil_properties = self._words[self._hifeil_index].properties_dict()
+        for property in word_properties:
+            vector_dict["hifeil_" + property] = hifeil_properties[property]
 
-def get_joined_json_data():
-    heb_sents = Sentence.get_sentences_from_json("../data_processing/modern_hebrew/sentences_modern_hebrew.json")
-    bible_sents = Sentence.get_sentences_from_json("../data_processing/bible/sentences_bible.json")
-    joined_sents = heb_sents + bible_sents
-    Sentence.convert_sentences_to_json(joined_sents, "joined_sentences_no_tags.json")
+        # add propeties of {words_prev} words before hifeil verb
+        for i in range(1, words_prev+1):
+            word_idx = self._hifeil_index - i
+            if word_idx < 0:
+                vector_dict.update({"prev_word_" + str(i) + "_" + p: 0 for p in word_properties})
+            else:
+                vector_dict.update({"prev_word_" + str(i) + "_" + p: v for p, v in self._words[word_idx].properties_dict().items()})
+
+        # add propeties of {words_after} words after hifeil verb
+        for i in range(1, words_after+1):
+            word_idx = self._hifeil_index + i
+            if word_idx > self._len-1:
+                vector_dict.update({"after_word_" + str(i) + "_" + p: 0 for p in word_properties})
+            else:
+                vector_dict.update({"after_word_" + str(i) + "_" + p: v for p, v in self._words[word_idx].properties_dict().items()})
+        return vector_dict
 
 
-def add_tagging_data():
-    sentences = Sentence.get_sentences_from_json("json_files/joined_sentences_no_tags.json")
-    tagged_sentences = []
-    tagging_data_path = "json_files/bible_tags.json"
-    with open(tagging_data_path, encoding='utf-8') as td:
-        data = json.load(td)
+    @staticmethod
+    def create_sentence_vector(sentences: List['Sentence'], words_prev: int = 2, words_after: int = 2) -> pd.DataFrame:
+        rows = [s._sentence_vector_dict(words_prev, words_after) for s in sentences]
+        for r in rows:
+            del r["hifeil_properties_dict"]
+            for i in range(1, words_prev + 1):
+                del r["prev_word_" + str(i) + "_" + "properties_dict"]
+            for i in range(1, words_after + 1):
+                del r["after_word_" + str(i) + "_" + "properties_dict"]
 
-    for sent in sentences:
-        if data.get(sent._id, None) is not None:
-            sent._rosen_def = data[sent._id]["rosen_def"]
-            sent._glirt_def = data[sent._id]["glirt_def"]
-            tagged_sentences.append(sent)
-
-    Sentence.convert_sentences_to_json(tagged_sentences, "json_files/tagged_sentences_data.json")
+        return pd.DataFrame(rows, columns=rows[0].keys())
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
+    sentences = Sentence.get_sentences_from_json("json_files/tagged_sentences_data.json")
+    df = Sentence.create_sentence_vector(sentences, 4, 0)
+    print(df.head(10))
