@@ -45,6 +45,8 @@ def word_tense(words):
 
 
 def word_wordtype(words):
+    if "Foreign=Yes" in words[5]:
+        return WordType.NOUN
     if "ADP" in words[3]:
         return WordType.ADP
     elif "VERB" in words[3] or "VerbType=" in words[5] or "HebBinyan=" in words[5]:
@@ -96,7 +98,7 @@ def word_builder(words):
 
 
 def data_parser():
-    paths = ['modern_hebrew_data/he_iahltwiki-ud-dev.conllu.txt', 'modern_hebrew_data/he_iahltwiki-ud-dev.conllu.txt', 'modern_hebrew_data/he_iahltwiki-ud-train.conllu.txt']
+    paths = ['modern_hebrew_data/he_iahltwiki-ud-train.conllu.txt']
     sentences_per_path = []
     for path in paths:
         sentences = single_file_data_parser(path)
@@ -114,26 +116,26 @@ def single_file_data_parser(file_name):
             if not line:
                 break
             if line[2:9] == "sent_id":
-                sent_id = "sentnce_id:" + line[12:line.__len__()-1]
-                original_line = file.readline()
+                sent_id = line[12:line.__len__()-1]
+                file.readline() # skip first text = line
                 words_of_sentence = []
                 line = file.readline()
                 if not line or line is None:
                     break
                 hifeil_index = -1
-                while line[0] != "#" and line[1] != "-":
+                while len(line) > 0 and line[0] != "#": # process a sentence
                     words = line.split()
                     if "-" not in words[0] and "PUNCT" not in words[3] and "SYM" not in words[3]:
                         word_object = word_builder(words)
-                        if "Foreign=Yes" in words[5]:
-                            break
                         words_of_sentence.append(word_object)
-                        for index, word in enumerate(words):
+                        for index, word in enumerate(words): # iterate over word components
                             if "HebBinyan=HIFIL" in word and hifeil_index == -1:
                                 hifeil_index = len(words_of_sentence)-1
+                    # once hifeil is found, add Sentence, words will be updated
                     if hifeil_index != -1:
                         sentences.append(Sentence(SOURCE, sent_id, hifeil_index, words_of_sentence))
                     line = file.readline()
+                    # print("line:"+line)
                     if line == '\n':
                         break
         return sentences
@@ -141,5 +143,4 @@ def single_file_data_parser(file_name):
 
 if __name__ == '__main__':
     sentence = data_parser()
-    sentences_json = Sentence.convert_sentences_to_json(sentence)
-
+    sentences_json = Sentence.convert_sentences_to_json(sentence, "sentences_modern_hebrew.json")
