@@ -50,10 +50,19 @@ def convert_word(bible_word) -> Word:
 
 
 def convert_sentence(sent: BibleSentence) -> Sentence:
+    count = 0
+    for word in sent.words:
+        for mword in word.raw_data.find_all("m"):
+            if mword['ana'] != " #SUFFIX_NOMINAL_ENDING" and "HIFIL" in mword.get("ana", ""):
+                count += 1
+                break
+    if count > 1:
+        print(sent.id)
     bible_mwords = [mword for word in sent.words
                   for mword in word.raw_data.find_all("m") if mword['ana'] != " #SUFFIX_NOMINAL_ENDING"]
     # remove all suffix elements
     sent_words = [convert_word(bible_mword) for bible_mword in bible_mwords]
+
     for i in range(len(bible_mwords)):
         if "HIFIL" in bible_mwords[i].get("ana", ""):
             hifil_index = i
@@ -68,4 +77,6 @@ def convert_to_unified_sentences(bible_sents = List[BibleSentence]) -> List[Sent
 if __name__ == '__main__':
     sentences = Book.get_all_sentences_with_hifeil(["bible_data/Torah.xml", "bible_data/Prophets.xml", "bible_data/Writings.xml"])
     unified_sentences = convert_to_unified_sentences(sentences)
-    Sentence.convert_sentences_to_json(unified_sentences)
+#    Sentence.convert_sentences_to_json(unified_sentences)
+
+

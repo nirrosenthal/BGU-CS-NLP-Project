@@ -67,5 +67,5 @@ def convert_to_unified_sentences(bible_sents = List[BibleSentence]) -> List[Sent
 
 if __name__ == '__main__':
     sentences = Book.get_all_sentences_with_hifeil(["bible_data/Prophets.xml", "bible_data/Torah.xml", "bible_data/Writings.xml"])
-    unified_sentences = convert_to_unified_sentences(sentences)
-    Sentence.convert_sentences_to_json(unified_sentences)
+    #unified_sentences = convert_to_unified_sentences(sentences)
+    #Sentence.convert_sentences_to_json(unified_sentences)

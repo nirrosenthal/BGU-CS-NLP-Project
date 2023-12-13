@@ -100,10 +100,12 @@ class Sentence:
             for i in range(1, words_after + 1):
                 del r["after_word_" + str(i) + "_" + "properties_dict"]
 
-        return pd.DataFrame(rows, columns=rows[0].keys())
+        df = pd.DataFrame(rows, columns=rows[0].keys())
+        df.drop(['len'], axis = 'columns', inplace=True)
+        df.to_csv("sentence_vector"+str(words_prev)+"_"+str(words_after)+".csv")
+        return df
 
-
+### run this on 1000 sentence input
 if __name__ == "__main__":
     sentences = Sentence.get_sentences_from_json("json_files/tagged_sentences_data.json")
-    df = Sentence.create_sentence_vector(sentences, 4, 0)
-    print(df.head(10))
+    vector_df = Sentence.create_sentence_vector(sentences, 3, 3)

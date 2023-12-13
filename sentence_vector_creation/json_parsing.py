@@ -26,7 +26,15 @@ def add_tagging_data():
 
 
 if __name__ == "__main__":
-    get_joined_json_data()
+    # bible_sents = Sentence.get_sentences_from_json("../data_processing/bible/sentences_bible.json")
+    # hifils = {}
+    # for sent in bible_sents:
+    #     word = sent._words[sent._hifeil_index]._word
+    #     hifils[word] = hifils.get(word, 0)+1
+    #
+    # for k, v in hifils.items():
+    #     print(k, v)
+    #get_joined_json_data()
     add_tagging_data()
     sents = Sentence.get_sentences_from_json("json_files/tagged_sentences_data.json")
     heb = 0

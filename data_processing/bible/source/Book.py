@@ -43,6 +43,11 @@ class Book:
         return BeautifulSoup(data, 'xml')
 
     def get_sentences_with_hifeil(self) -> List['Sentences']:
+        # sents = [s for chapter in self._chapters for s in chapter.sentences]
+        # s = len(sents[0].words)+0.0
+        # for i in range(1, len(sents)-1):
+        #     s = float(s*i)/(i+1)+float(len(sents[i].words))/(i+1)
+        # print("total\t"+str(len(sents))+"\tavg_len\t"+str(s))
         return [sen for chapter in self._chapters for sen in chapter.get_sentences_with_hifeil()]
 
     @staticmethod
@@ -69,6 +74,5 @@ class Book:
             for book_body in group_book_data.find_all("body"):
                 book = Book._get_book_from_book_body(book_group, group_path_data, book_body)
                 sentences += book.get_sentences_with_hifeil()
-
         return sentences
 
